@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Task List</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Task List</h1>
+        <form id="taskForm">
+            <input type="text" id="taskInput" placeholder="Enter task name" required>
+            <button type="submit">Add Task</button>
+        </form>
+        <ul id="taskList"></ul>
+    </div>
+    <script>
+        const taskForm = document.getElementById('taskForm');
+        const taskInput = document.getElementById('taskInput');
+        const taskList = document.getElementById('taskList');
+        let tasks = [];
+
+        function renderTasks() {
+            taskList.innerHTML = '';
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<li class="empty">No tasks available.</li>';
+                return;
+            }
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = task.status === 'complete' ? 'done' : '';
+                li.innerHTML = `
+                    <span>${index + 1}. ${task.name} - ${task.status}</span>
+                    <button onclick="markDone(${index})">Done</button>
+                    <button onclick="removeTask(${index})">Remove</button>
+                `;
+                taskList.appendChild(li);
+            });
+        }
+
+        window.markDone = function(index) {
+            tasks[index].status = 'complete';
+            renderTasks();
+        };
+
+        window.removeTask = function(index) {
+            tasks.splice(index, 1);
+            renderTasks();
+        };
+
+        taskForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = taskInput.value.trim();
+            if (name) {
+                tasks.push({ name, status: 'incomplete' });
+                taskInput.value = '';
+                renderTasks();
+            }
+        });
+
+        renderTasks();
+    </script>
+</body>
+</html>
